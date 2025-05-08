@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Хоррор Викторина</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      background-image: url('фон.jpg'); /* фоновая картинка */
+      background-size: cover;
+      background-position: center;
+      color: white;
+      font-family: 'Arial', sans-serif;
+      text-align: center;
+    }
+
+    h1 {
+      margin-top: 30px;
+      font-size: 2.5em;
+      text-shadow: 2px 2px 10px black;
+    }
+
+    #question {
+      margin: 40px auto;
+      font-size: 1.8em;
+      max-width: 70%;
+    }
+
+    .answers button {
+      display: block;
+      width: 40%;
+      margin: 15px auto;
+      padding: 15px;
+      font-size: 1.2em;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .answers button:hover {
+      background-color: rgba(255, 0, 0, 0.8);
+    }
+
+    #lives {
+      font-size: 1.5em;
+      margin-top: 20px;
+    }
+
+    #scareScreen {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: black url('страшная_картинка.jpg') no-repeat center center;
+      background-size: cover;
+      color: red;
+      font-size: 3em;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.6; }
+      100% { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>💀 Хоррор Викторина 💀</h1>
+
+  <div id="lives">❤️ ❤️ ❤️</div>
+
+  <div id="question">Вопрос загружается...</div>
+
+  <div class="answers">
+    <button onclick="checkAnswer(true)">Правильный ответ</button>
+    <button onclick="checkAnswer(false)">Неправильный ответ</button>
+  </div>
+
+  <div id="scareScreen">ОН НАШЁЛ ТЕБЯ 👁️</div>
+
+  <script>
+    let lives = 3;
+    const livesDisplay = document.getElementById("lives");
+    const questionText = document.getElementById("question");
+    const scareScreen = document.getElementById("scareScreen");
+
+    const questions = [
+      "Что находится в заброшенной комнате?",
+      "Какой звук доносится из подвала?",
+      "Кто живет в старом зеркале?"
+    ];
+
+    let currentQuestion = 0;
+
+    function updateLives() {
+      if (lives > 0) {
+        livesDisplay.textContent = '❤️ '.repeat(lives).trim();
+      }
+    }
+
+    function nextQuestion() {
+      if (currentQuestion < questions.length) {
+        questionText.textContent = questions[currentQuestion];
+      } else {
+        questionText.textContent = "Вы выжили... на этот раз...";
+        document.querySelectorAll(".answers button").forEach(btn => btn.disabled = true);
+      }
+    }
+
+    function checkAnswer(isCorrect) {
+      if (lives <= 0) return;
+
+      if (!isCorrect) {
+        lives--;
+
+        // Звук крика (если есть)
+        const screamSound = new Audio('крик.mp3');
+        screamSound.play();
+
+        updateLives();
+
+        if (lives === 0) {
+          // Блокируем кнопки
+          document.querySelectorAll(".answers button").forEach(btn => btn.disabled = true);
+
+          // Показываем страшный экран
+          scareScreen.style.display = 'flex';
+
+          // Можно остановить игру полностью
+          return;
+        }
+      }
+
+      currentQuestion++;
+      nextQuestion();
+    }
+
+    nextQuestion();
+  </script>
+
+</body>
+</html>
